@@ -12,6 +12,7 @@
 #define __LOGIC_H__
 
 #include "basic.hpp"
+#include "qualifier.hpp"
 
 namespace traits
 {
@@ -33,7 +34,24 @@ namespace traits
     struct is_same<T,T> : true_type{};
 
     template<typename T , typename U>
-    static constexpr bool is_same_v = is_same<T,U>::value;
+    static constexpr bool is_same_v = is_same<T,U>::value;  
+
+    /******************************************************************************
+	 * Metafunction: is_same_raw
+	 *-----------------------------------------------------------------------------
+	 * Description:
+	 *   -This metafunction checks if two types are the same after removing all qualifiers.
+	 *
+	 * Template Parameters:
+	 *   -T : The first type.
+     *   -U : The second type.
+	 *
+	 *****************************************************************************/
+    template<typename T , typename U>
+    struct is_same_raw : is_same<remove_cv_t<T>,remove_cv_t<U>>{};
+
+    template<typename T , typename U>
+    static constexpr bool is_same_raw_v = is_same_raw<T,U>::value;
 
     /******************************************************************************
 	 * Metafunction: if_type
@@ -118,6 +136,6 @@ namespace traits
     template<bool condition>
     static constexpr bool Not_v = Not<condition>::value;
 
-    
+
 }  
 #endif // __LOGIC _H__

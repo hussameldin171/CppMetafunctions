@@ -56,7 +56,68 @@ namespace traits
     template<bool B , typename T , typename U>
     using if_type_t = typename if_type<B,T,U>::type;
 
+    /******************************************************************************
+	 * Metafunction: And
+	 *-----------------------------------------------------------------------------
+	 * Description:
+	 *   -This variadic metafunction returns true if all of its arguments are true.
+     *   -It must be used with at least one argument.
+	 * Template Parameters:
+     *   - cond         : The first boolean argument.
+	 *   -...conditions : The rest of the boolean arguments.
+	 *****************************************************************************/
 
-}
+    template<bool cond , bool... conditions>
+    struct And;
 
+    template<bool condition>
+    struct And<condition> : bool_constant<condition>{};
+
+    template<bool cond1 , bool cond2 , bool ...conditions>
+    struct And<cond1 , cond2, conditions...> : And< cond1&&cond2 , conditions...>{};
+
+    template<bool cond , bool... conditions>
+    static constexpr bool And_v = And<cond,conditions...>::value;
+
+    /******************************************************************************
+	 * Metafunction: Or
+	 *-----------------------------------------------------------------------------
+	 * Description:
+	 *   -This metafunction returns true if at least one of its arguments is true.
+     *   -It must be used with at least one argument.
+	 * Template Parameters:
+     *   - cond         : The first boolean argument.
+	 *   -...conditions : The rest of the boolean arguments.
+	 *****************************************************************************/
+
+    template<bool cond , bool... conditions>
+    struct Or;
+
+    template<bool condition>
+    struct Or<condition> : bool_constant<condition>{};
+
+    template<bool cond1 , bool cond2 , bool ...conditions>
+    struct Or<cond1 , cond2, conditions...> : Or< cond1||cond2 , conditions...>{};
+
+    template<bool cond , bool... conditions>
+    static constexpr bool Or_v = Or<cond,conditions...>::value;
+
+    /******************************************************************************
+	 * Metafunction: Not
+	 *-----------------------------------------------------------------------------
+	 * Description:
+	 *   -This metafunction returns the logical invert of a boolean value.
+	 *
+	 * Template Parameters:
+	 *   -condition : The boolean value to invert.
+     * 
+	 *****************************************************************************/
+    template<bool condition>
+    struct Not : bool_constant<!condition>{};
+
+    template<bool condition>
+    static constexpr bool Not_v = Not<condition>::value;
+
+    
+}  
 #endif // __LOGIC _H__

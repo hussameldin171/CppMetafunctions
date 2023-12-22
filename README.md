@@ -1,2 +1,2 @@
 # CppMetafunctions
-A C++ user defined library that uses template metaprogramming to create a set of useful metafunctions.
+A C++ library that uses template metaprogramming to create a set of useful metafunctions.

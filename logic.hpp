@@ -136,6 +136,35 @@ namespace traits
     template<bool condition>
     static constexpr bool Not_v = Not<condition>::value;
 
+    /******************************************************************************
+	 * Metafunction: is_in_pack
+	 *-----------------------------------------------------------------------------
+	 * Description:
+	 *   -This metafunction returns true if a type is in a pack of types.
+     *   -It is very useful in implementing type checking metafunctions (is_integral , is_floating_point , ...)
+     *   -It must be used with at least one type.
+     *   
+	 *
+	 * Template Parameters:
+	 *   -T : The type to search for.
+     *  -...types : The pack of types to search in.
+     * 
+	 *****************************************************************************/
+    template<typename T, typename ...types>
+    struct is_in_pack;
+
+    template<typename T>
+    struct is_in_pack<T> : false_type{};
+
+    template<typename T, typename ...types>
+    struct is_in_pack<T,T,types...> : true_type{};
+
+
+    template<typename T,typename type1 , typename ...otherTypes>
+    struct is_in_pack<T,type1, otherTypes...> : is_in_pack<T,otherTypes...>{};
+
+    template<typename T, typename ...types>
+    static constexpr bool is_in_pack_v = is_in_pack<T,types...>::value;
 
 }  
 #endif // __LOGIC _H__

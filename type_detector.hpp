@@ -40,6 +40,21 @@ namespace traits
 
     template<typename T , typename Void = void>
     static constexpr bool is_signed_v = is_signed<T,Void>::value;
+    /******************************************************************************
+	 * Metafunction: is_unsigned
+	 *-----------------------------------------------------------------------------
+	 * Description:
+	 *   -This metafunction returns true if a given type is unsigned.
+     * 
+	 * Template Parameters:
+	 *   -T : The type to check whether it's unsigned or not.
+	 *
+	 *****************************************************************************/
+    template<typename T>
+    struct is_unsigned : Not<is_signed_v<T>>{};
+
+    template<typename T>
+    static constexpr bool is_unsigned_v = is_unsigned<T>::value;
 
     /******************************************************************************
 	 * Metafunction: is_pointer
@@ -63,6 +78,32 @@ namespace traits
 
     template<typename T>
     static constexpr bool is_pointer_v = is_pointer<T>::value;
+
+    /******************************************************************************
+	 * Metafunction: is_reference
+	 *-----------------------------------------------------------------------------
+	 * Description:
+	 *   -This metafunction returns true if a given type is a reference.
+     *   -It uses a universal reference to detect both types of references.
+     * 
+	 * Template Parameters:
+	 *   -T : The type to check whether it's a reference type or not.
+	 *
+	 *****************************************************************************/
+    template<typename T>
+    struct is_reference_helper : false_type{};
+
+    template<typename T>
+    struct is_reference_helper<T&&> : true_type{};
+
+    template<typename T>
+    struct is_reference_helper<T&> : true_type{};
+
+    template<typename T>
+    struct is_reference : is_reference_helper< remove_cv_t<T>> {};
+
+    template<typename T>
+    static constexpr bool is_reference_v = is_reference<T>::value;
 
     /******************************************************************************
 	 * Metafunction: is_integral
@@ -115,6 +156,87 @@ namespace traits
     
     template<typename T>
     static constexpr bool is_floating_point_v = is_floating_point<T>::value;
+
+    /******************************************************************************
+	 * Metafunction: is_numeric
+	 *-----------------------------------------------------------------------------
+	 * Description:
+	 *   -This metafunction returns true if a given type is a numeric type(integral or floating point)
+     * 
+	 * Template Parameters:
+	 *   -T : The type to check whether it's numeric or not.
+	 *
+	 *****************************************************************************/
+    template<typename T>
+    struct is_numeric : Or<is_integral_v<T> , is_floating_point_v<T>>{};
+
+    template<typename T>
+    static constexpr bool is_numeric_v = is_numeric<T>::value;
+
+    /******************************************************************************
+     * Metafunction: is_array
+     * -----------------------------------------------------------------------------
+     * Description:
+     *  -This metafunction returns true if a given type is an array.
+     * 
+     * Template Parameters:
+     * -T : The type to check whether it's an array or not.
+     * 
+     *****************************************************************************/
+    template<typename T>
+    struct is_array : false_type{};
+
+    template<typename T>
+    struct is_array<T[]> : true_type{};
+
+    template<typename T , size_t N>
+    struct is_array<T[N]> : true_type{};
+
+    template<typename T>
+    static constexpr bool is_array_v = is_array<T>::value;
+
+    /******************************************************************************
+     * Metafunction: is_function
+     * -----------------------------------------------------------------------------
+     * Description:
+     *  -This metafunction returns true if a given type is a function.
+     * 
+     * Template Parameters:
+     * -T : The type to check whether it's a function or not.
+     * 
+     *****************************************************************************/
+
+    template<typename T>
+    struct is_function : false_type{};
+
+    template<typename T , typename ...Args>
+    struct is_function<T(Args...)> : true_type{};
+
+    template<typename T>
+    static constexpr bool is_function_v = is_function<T>{};
+
+    /******************************************************************************
+     * Metafunction: is_class
+     * -----------------------------------------------------------------------------
+     * Description:
+     *  -This metafunction returns true if a given type is a class.
+     *  -It uses SFINAE and void_t to detect whether a given type is a class or not.
+     * 
+     * Template Parameters:
+     * -T : The type to check whether it's a class or not.
+     * 
+     *****************************************************************************/
+    template<typename T , typename = void>
+    struct is_class : false_type{};
+
+    template<typename T>
+    using class_type = int T::*;
+
+    template<typename T>
+    struct is_class<T , void_t< class_type<T> >> : true_type{};
+
+    template<typename T>
+    static constexpr bool is_class_v = is_class<T>{};
 
 }
 

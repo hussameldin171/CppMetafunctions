@@ -159,12 +159,33 @@ namespace traits
     template<typename T, typename ...types>
     struct is_in_pack<T,T,types...> : true_type{};
 
-
     template<typename T,typename type1 , typename ...otherTypes>
     struct is_in_pack<T,type1, otherTypes...> : is_in_pack<T,otherTypes...>{};
 
     template<typename T, typename ...types>
     static constexpr bool is_in_pack_v = is_in_pack<T,types...>::value;
+
+    /******************************************************************************
+	 * Metafunction: enable_if
+	 *-----------------------------------------------------------------------------
+	 * Description:
+	 *   -This metafunction returns a type if a boolean condition is true, otherwise nothing.
+     *   -It is very useful in implementing SFINAE.
+     *   -It must be used with at least one type.
+     * 
+	 * Template Parameters:
+     *  - condition : The boolean condition.
+     * - T         : The type to return if condition is true.
+     * 
+	 *****************************************************************************/
+    template<bool condition , typename T = void>
+    struct enable_if : type_is<T>{};
+
+    template<typename T>
+    struct enable_if<false,T>{};
+
+    template<bool condition , typename T>
+    using enable_if_t = typename enable_if<condition,T>::type;
 
 }  
 #endif // __LOGIC _H__

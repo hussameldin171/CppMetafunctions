@@ -238,6 +238,27 @@ namespace traits
     template<typename T>
     static constexpr bool is_class_v = is_class<T>{};
 
+
+    /******************************************************************************
+     * Metafunction: is_container
+     * -----------------------------------------------------------------------------
+     * Description:
+     *  -This metafunction returns true if a given type is a container.
+     * 
+     * Template Parameters:
+     * -T : The type to check whether it's a container or not.
+     * 
+     *****************************************************************************/
+    template<typename T>
+    struct is_container : false_type{};
+
+    template< template<typename, typename> class Container , typename T , typename Allocator>
+    struct is_container<Container<T,Allocator> > : true_type{};
+
+    template<typename T>
+    static constexpr bool is_container_v = is_container<T>::value;
+
+
 }
 
 #endif // __TYPE_DETECTOR_H__
